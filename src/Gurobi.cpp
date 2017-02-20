@@ -235,6 +235,11 @@ void GurobiCommon::problem(int nrvar, int nreq, int nrineq)
 		ineqvars_.insert(ineqvars_.end(), static_cast<size_t>(nrineq_), *(vars_+i));
 	}
 }
+    
+void GurobiCommon::setVariableType(int varIndex, char GRBType) {
+    model_.getVar(varIndex).set(GRB_CharAttr_VType, GRBType);
+}
+
 
 /**
 	*												GurobiDense
@@ -275,9 +280,9 @@ void GurobiDense::updateConstr(GRBConstr* constrs, const std::vector<GRBVar>& va
 
 
 bool GurobiDense::solve(const MatrixXd& Q, const VectorXd& C,
-	const MatrixXd& Aeq, const VectorXd& Beq,
-	const MatrixXd& Aineq, const VectorXd& Bineq,
-	const VectorXd& XL, const VectorXd& XU)
+	                     const MatrixXd& Aeq, const VectorXd& Beq,
+                         const MatrixXd& Aineq, const VectorXd& Bineq,
+                         const VectorXd& XL, const VectorXd& XU)
 {
 	//Objective
 	GRBQuadExpr qexpr;

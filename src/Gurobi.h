@@ -23,7 +23,7 @@
 //Gurobi
 #include <gurobi_c++.h>
 
-// eigen-quadprog
+// eigen-gurobi
 #include "eigen_gurobi_api.h"
 
 namespace Eigen
@@ -61,6 +61,8 @@ public:
 	EIGEN_GUROBI_API void optimalityTolerance(double tol);
 
 	EIGEN_GUROBI_API void problem(int nrvar, int nreq, int nrineq);
+    
+    EIGEN_GUROBI_API void setVariableType(int varIndex, char GRBType);
 
 protected:
 	MatrixXd Q_;
@@ -83,8 +85,56 @@ public:
 	EIGEN_GUROBI_API GurobiDense();
 	EIGEN_GUROBI_API GurobiDense(int nrvar, int nreq, int nrineq);
 
+    
+	/**
+	 Performs the following operations:
+     - Removes existing variables and constraints from the model.
+     - Clears variables.
+     - Alocates matrices.
+     - Creates variables (all continuous for the moment).
+     - Creates constraints.
+
+	 @param nrvar Number of variables.
+	 @param nreq Number of equalities.
+	 @param nrineq Number of inequalities.
+	 */
 	EIGEN_GUROBI_API void problem(int nrvar, int nreq, int nrineq);
 
+    
+	/**
+     Solves a model with quadratic objective:
+     \f[
+     \underset{x}{\text{min}}\; x^TQx^T + c^Tx
+     \f]
+     Subject to equality constraints:
+     \f[
+     A_{\text{eq}} x = b_{\text{eq}}
+     \f]
+     And inequality constraints:
+     \f[
+     A_{\text{ineq}} x = b_{\text{ineeq}}
+     \f]
+     Variables \f$x\f$ can also be bounded such that:
+     \f[
+     x_{\text{l}} \leq x \leq x_{\text{u}}
+     \f]
+     
+	 Performs the following operations:
+     - Creates and sets a quadratic objective.
+     - Sets lower and upper boundaries.
+     - Updates constraints (equalities and inequalities).
+     - Optimizes.
+
+	 @param Q Dense matrix \f$Q\f$ with the quadratic coefficients.
+	 @param C Linear part of the objective function, i.e. \f$c^T\f$
+	 @param Aeq Equality matrix \f$A_{eq}\f$
+	 @param Beq Right hand side of the equality equation \f$b_{eq}\f$
+	 @param Aineq Inequality matrix \f$A_{ineq}\f$
+	 @param Bineq Inequality vector \f$b_{ineq}\f$
+	 @param XL Vector of lower boundaries of the variables \f$x_l\f$
+	 @param XU Vector of upper boundaries of the variables \f$x_u\f$
+	 @return True if solved successfully, False otherwise.
+	 */
 	EIGEN_GUROBI_API bool solve(const MatrixXd& Q, const VectorXd& C,
 		const MatrixXd& Aeq, const VectorXd& Beq,
 		const MatrixXd& Aineq, const VectorXd& Bineq,
