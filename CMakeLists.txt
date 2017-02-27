@@ -31,6 +31,6 @@ include_directories(${GUROBI_INCLUDE_DIRS} ${EIGEN_INCLUDE_DIRS})
 add_definitions("-DEIGEN_GUROBI_EXPORT")
 
 add_subdirectory(src)
-add_subdirectory(tests)
+# add_subdirectory(tests)
 
 setup_project_finalize()

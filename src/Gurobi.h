@@ -61,8 +61,8 @@ public:
 	EIGEN_GUROBI_API void optimalityTolerance(double tol);
 
 	EIGEN_GUROBI_API void problem(int nrvar, int nreq, int nrineq);
-    
-    EIGEN_GUROBI_API void setVariableType(int varIndex, char GRBType);
+
+	EIGEN_GUROBI_API void setVariableType(int varIndex, char GRBType);
 
 protected:
 	MatrixXd Q_;
@@ -85,7 +85,7 @@ public:
 	EIGEN_GUROBI_API GurobiDense();
 	EIGEN_GUROBI_API GurobiDense(int nrvar, int nreq, int nrineq);
 
-    
+
 	/**
 	 Performs the following operations:
      - Removes existing variables and constraints from the model.
@@ -100,7 +100,7 @@ public:
 	 */
 	EIGEN_GUROBI_API void problem(int nrvar, int nreq, int nrineq);
 
-    
+
 	/**
      Solves a model with quadratic objective:
      \f[
@@ -118,7 +118,7 @@ public:
      \f[
      x_{\text{l}} \leq x \leq x_{\text{u}}
      \f]
-     
+
 	 Performs the following operations:
      - Creates and sets a quadratic objective.
      - Sets lower and upper boundaries.

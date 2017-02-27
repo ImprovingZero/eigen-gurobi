@@ -1,8 +1,9 @@
 set(SOURCES Gurobi.cpp)
 set(HEADERS eigen_gurobi_api.h Gurobi.h)
 
-add_library(${PROJECT_NAME} SHARED ${SOURCES} ${HEADERS})
+add_library(${PROJECT_NAME} STATIC ${SOURCES} ${HEADERS})
 foreach(GUROBI_LIBRARY ${GUROBI_LIBRARIES})
+  message(">>>> Linking eigen-gurobi against " ${GUROBI_LIBRARY})
   target_link_libraries(${PROJECT_NAME} ${GUROBI_LIBRARY})
 endforeach()
 
