@@ -18,12 +18,8 @@
 #include <iostream>
 #include <type_traits>
 
-// boost
-#define BOOST_TEST_DYN_LINK
-#define BOOST_TEST_MODULE Eigen_Gurobi
-#include <boost/test/unit_test.hpp>
-#include <boost/math/constants/constants.hpp>
-#include <boost/test/floating_point_comparison.hpp>
+// Catch2
+#include <catch2/catch.hpp>
 
 // Eigen
 #include <Eigen/Dense>
@@ -78,7 +74,7 @@ struct QP1
 };
 
 
-BOOST_AUTO_TEST_CASE(GurobiDense)
+TEST_CASE("Test dense version", "[GurobiDense]")
 {
 	QP1 qp1;
 
@@ -93,10 +89,10 @@ BOOST_AUTO_TEST_CASE(GurobiDense)
 		qp1.Aineq, qp1.Bineq,
 		qp1.XL, qp1.XU);
 
-	BOOST_CHECK_SMALL((qp.result() - qp1.X).norm(), 1e-6);
+	CHECK((qp.result() - qp1.X).norm() == Approx(0).margin(1e-6));
 }
 
-BOOST_AUTO_TEST_CASE(GurobiSparse)
+TEST_CASE("Test sparse version", "[GurobiSparse]")
 {
 	QP1 qp1;
 
@@ -119,10 +115,10 @@ BOOST_AUTO_TEST_CASE(GurobiSparse)
 		SAineq, SBineq,
 		qp1.XL, qp1.XU);
 
-	BOOST_CHECK_SMALL((qp.result() - qp1.X).norm(), 1e-6);
+	CHECK((qp.result() - qp1.X).norm() == Approx(0).margin(1e-6));
 }
 
-BOOST_AUTO_TEST_CASE(SolverParameters)
+TEST_CASE("Test solver parameters", "[SolverParameters]")
 {
 	QP1 qp1;
 
@@ -139,13 +135,13 @@ BOOST_AUTO_TEST_CASE(SolverParameters)
 	qp.optimalityTolerance(tol);
 	qp.inform();
 
-	BOOST_CHECK_SMALL(tol - qp.feasibilityTolerance(), 1e-8);
-	BOOST_CHECK_SMALL(tol - qp.optimalityTolerance(), 1e-8);
-	BOOST_CHECK_EQUAL(static_cast<ut>(WS::NONE), static_cast<ut>(qp.warmStart()));
+	CHECK(tol - qp.feasibilityTolerance() == Approx(0).margin(1e-8));
+	CHECK(tol - qp.optimalityTolerance() == Approx(0).margin(1e-8));
+	CHECK(static_cast<ut>(WS::NONE) == static_cast<ut>(qp.warmStart()));
 
 	std::cout << "Solve" << std::endl;
-	BOOST_REQUIRE(qp.solve(qp1.Q, qp1.C, qp1.Aeq, qp1.Beq, qp1.Aineq, qp1.Bineq, qp1.XL, qp1.XU));
+	REQUIRE(qp.solve(qp1.Q, qp1.C, qp1.Aeq, qp1.Beq, qp1.Aineq, qp1.Bineq, qp1.XL, qp1.XU));
 
-	BOOST_CHECK_SMALL((qp.result() - qp1.X).norm(), 1e-6);
+	CHECK((qp.result() - qp1.X).norm() == Approx(0).margin(1e-6));
 	qp.inform();
 }
