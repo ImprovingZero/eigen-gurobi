@@ -1,36 +1,34 @@
-cmake_minimum_required(VERSION 2.8)
-
-include(cmake/base.cmake)
-include(cmake/boost.cmake)
-
-list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}")
-
-set(PROJECT_NAME eigen-gurobi)
+cmake_minimum_required(VERSION 3.9)
+project(eigen-gurobi CXX)
 set(PROJECT_DESCRIPTION "Gurobi QP solver through Eigen3 library.")
-set(PROJECT_URL "https://github.com/haudren/eigen-gurobi")
 
-project(${PROJECT_NAME} CXX)
+### Configuration
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 
-# Disable -Werror on Unix for now.
-set(CXX_DISABLE_WERROR True)
-set(DOXYGEN_USE_MATHJAX "YES")
+################################################################################
+# Eigen-Gurobi Library
+################################################################################
 
-setup_project()
+add_library(${PROJECT_NAME} "src/Gurobi.cpp")
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x")
+target_include_directories(${PROJECT_NAME} PUBLIC "src/")
 
-if(UNIX)
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -pedantic")
-endif()
+################################################################################
+# Required Libraries
+################################################################################
 
-find_package(GUROBI REQUIRED)
+# Eigen
 find_package(Eigen REQUIRED)
+target_include_directories(${PROJECT_NAME} PUBLIC ${Eigen_INCLUDE_DIRS})
 
-include_directories(${GUROBI_INCLUDE_DIRS} ${EIGEN_INCLUDE_DIRS})
+# Gurobi
+find_package(GUROBI REQUIRED)
+target_include_directories(${PROJECT_NAME} PUBLIC ${GUROBI_INCLUDE_DIRS})
+foreach(GUROBI_LIBRARY ${GUROBI_LIBRARIES})
+  message(STATUS "Linking ${PROJECT_NAME} against ${GUROBI_LIBRARY}")
+  target_link_libraries(${PROJECT_NAME} ${GUROBI_LIBRARY})
+endforeach()
 
-add_definitions("-DEIGEN_GUROBI_EXPORT")
-
-add_subdirectory(src)
-# add_subdirectory(tests)
-
-setup_project_finalize()
+################################################################################
+# Compiler options
+################################################################################
