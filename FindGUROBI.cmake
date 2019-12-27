@@ -1,51 +1,51 @@
-#### Taken from http://www.openflipper.org/svnrepo/CoMISo/trunk/CoMISo/cmake/FindGUROBI.cmake with slight modifications
-
-
 # - Try to find GUROBI
 # Once done this will define
 #  GUROBI_FOUND - System has Gurobi
 #  GUROBI_INCLUDE_DIRS - The Gurobi include directories
 #  GUROBI_LIBRARIES - The libraries needed to use Gurobi
 
-if (GUROBI_INCLUDE_DIR)
+if(GUROBI_INCLUDE_DIR)
   # in cache already
   set(GUROBI_FOUND TRUE)
   set(GUROBI_INCLUDE_DIRS "${GUROBI_INCLUDE_DIR}" )
   set(GUROBI_LIBRARIES "${GUROBI_LIBRARY};${GUROBI_CXX_LIBRARY}" )
-else (GUROBI_INCLUDE_DIR)
+else()
 
+file(GLOB GUROBI_HOME_MACOS "/Library/gurobi*/mac64/")
+file(GLOB GUROBI_HOME_WINDOWS "C:\\libs\\gurobi*")
 find_path(GUROBI_INCLUDE_DIR
           NAMES gurobi_c++.h
           PATHS "$ENV{GUROBI_HOME}/include"
-                  "/Library/gurobi502/mac64/include"
-                 "C:\\libs\\gurobi502\\include"
-          )
-find_library( GUROBI_LIBRARY
-              NAMES gurobi
-										gurobi70
-		    					  gurobi45
-		    						gurobi46
-        						gurobi50
-        						gurobi51
-        						gurobi52
-        						gurobi55
-        						gurobi56
-        						gurobi60
-        						gurobi65
-              			PATHS "$ENV{GUROBI_HOME}/lib"
-                    			"/Library/gurobi70/mac64/lib"
-                    			"C:\\libs\\gurobi70\\lib"
-              )
+                "${GUROBI_HOME_MACOS}/include"
+                "${GUROBI_HOME_WINDOWS}\\include")
 
-find_library( GUROBI_CXX_LIBRARY
-              NAMES gurobi_c++
-              PATHS "$ENV{GUROBI_HOME}/lib"
-                    "/Library/gurobi70/mac64/lib"
-                    "C:\\libs\\gurobi70\\lib"
-              )
+find_library(GUROBI_LIBRARY
+             NAMES gurobi
+                   gurobi45
+                   gurobi46
+                   gurobi50
+                   gurobi51
+                   gurobi52
+                   gurobi55
+                   gurobi56
+                   gurobi60
+                   gurobi65
+                   gurobi70
+                   gurobi90
+             PATHS "$ENV{GUROBI_HOME}/lib"
+                   "${GUROBI_INCLUDE_DIR}/../lib"
+                   "${GUROBI_HOME_MACOS}/lib"
+                   "${GUROBI_HOME_WINDOWS}\\lib")
 
-set(GUROBI_INCLUDE_DIRS "${GUROBI_INCLUDE_DIR}" )
-# It is very important
+find_library(GUROBI_CXX_LIBRARY
+             NAMES gurobi_c++
+             PATHS "$ENV{GUROBI_HOME}/lib"
+                   "${GUROBI_CXX_LIBRARY}"
+                   "${GUROBI_HOME_MACOS}/lib"
+                   "${GUROBI_HOME_WINDOWS}\\lib")
+
+
+set(GUROBI_INCLUDE_DIRS "${GUROBI_INCLUDE_DIR}")
 set(GUROBI_LIBRARIES ${GUROBI_CXX_LIBRARY} ${GUROBI_LIBRARY})
 
 # use c++ headers as default
@@ -54,9 +54,9 @@ set(GUROBI_LIBRARIES ${GUROBI_CXX_LIBRARY} ${GUROBI_LIBRARY})
 include(FindPackageHandleStandardArgs)
 # handle the QUIETLY and REQUIRED arguments and set LIBCPLEX_FOUND to TRUE
 # if all listed variables are TRUE
-find_package_handle_standard_args(GUROBI  DEFAULT_MSG
-                                  GUROBI_LIBRARY GUROBI_CXX_LIBRARY GUROBI_INCLUDE_DIR)
+find_package_handle_standard_args(
+  GUROBI DEFAULT_MSG GUROBI_LIBRARY GUROBI_CXX_LIBRARY GUROBI_INCLUDE_DIR)
 
 mark_as_advanced(GUROBI_INCLUDE_DIR GUROBI_LIBRARY GUROBI_CXX_LIBRARY)
 
-endif(GUROBI_INCLUDE_DIR)
+endif()
