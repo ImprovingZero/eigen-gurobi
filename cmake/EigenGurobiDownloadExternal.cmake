@@ -3,9 +3,9 @@ include(DownloadProject)
 # With CMake 3.8 and above, we can hide warnings about git being in a
 # detached head by passing an extra GIT_CONFIG option
 if(NOT (${CMAKE_VERSION} VERSION_LESS "3.8.0"))
-  set(${PROJECT_NAME}_EXTRA_OPTIONS "GIT_CONFIG advice.detachedHead=false")
+  set(EIGEN_GUROBI_EXTRA_OPTIONS "GIT_CONFIG advice.detachedHead=false")
 else()
-  set(${PROJECT_NAME}_EXTRA_OPTIONS "")
+  set(EIGEN_GUROBI_EXTRA_OPTIONS "")
 endif()
 
 function(custom_download_project name)
