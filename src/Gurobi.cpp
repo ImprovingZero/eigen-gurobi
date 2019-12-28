@@ -33,6 +33,8 @@ GurobiCommon::GurobiCommon():
 	Beq_(),
 	Bineq_(),
 	X_(),
+	Yeq_(),
+	Yineq_(),
 	fail_(0),
 	nrvar_(0),
 	nreq_(0),
@@ -59,6 +61,16 @@ int GurobiCommon::fail() const
 const VectorXd& GurobiCommon::result() const
 {
 	return X_;
+}
+
+const VectorXd& GurobiCommon::dual_eq() const
+{
+	return Yeq_;
+}
+
+const VectorXd& GurobiCommon::dual_ineq() const
+{
+	return Yineq_;
 }
 
 GurobiCommon::WarmStatus GurobiCommon::warmStart() const
@@ -207,6 +219,8 @@ void GurobiCommon::problem(int nrvar, int nreq, int nrineq)
 	Beq_.resize(nreq);
 	Bineq_.resize(nrineq);
 	X_.resize(nrvar);
+	Yeq_.resize(nreq);
+	Yineq_.resize(nrineq);
 
 	vars_ = model_.addVars(nrvar, GRB_CONTINUOUS);
 
@@ -306,6 +320,10 @@ bool GurobiDense::solve(const MatrixXd& Q, const VectorXd& C,
 	iter_ = model_.get(GRB_IntAttr_BarIterCount);
 	double* result = model_.get(GRB_DoubleAttr_X, vars_, nrvar_);
 	X_ = Map<VectorXd>(result, nrvar_);
+	double* dual_eq = model_.get(GRB_DoubleAttr_Pi, eqconstr_, nreq_);
+	Yeq_ = Map<VectorXd>(dual_eq, nreq_);
+	double* dual_ineq = model_.get(GRB_DoubleAttr_Pi, ineqconstr_, nrineq_);
+	Yineq_ = Map<VectorXd>(dual_ineq, nrineq_);
 
 	return success;
 }
@@ -396,6 +414,10 @@ bool GurobiSparse::solve(const SparseMatrix<double>& Q, const SparseVector<doubl
 	double* result = model_.get(GRB_DoubleAttr_X, vars_, nrvar_);
 	iter_ = model_.get(GRB_IntAttr_BarIterCount);
 	X_ = Map<VectorXd>(result, nrvar_);
+	double* dual_eq = model_.get(GRB_DoubleAttr_Pi, eqconstr_, nreq_);
+	Yeq_ = Map<VectorXd>(dual_eq, nreq_);
+	double* dual_ineq = model_.get(GRB_DoubleAttr_Pi, ineqconstr_, nrineq_);
+	Yineq_ = Map<VectorXd>(dual_ineq, nrineq_);
 
 	return success;
 }

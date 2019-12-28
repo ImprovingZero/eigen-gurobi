@@ -145,3 +145,32 @@ TEST_CASE("Test solver parameters", "[SolverParameters]")
 	CHECK((qp.result() - qp1.X).norm() == Approx(0).margin(1e-6));
 	qp.inform();
 }
+
+TEST_CASE("Test dual variables", "[Dual]")
+{
+	QP1 qp1;
+
+	Eigen::GurobiSparse qp(qp1.nrvar, qp1.nreq, qp1.nrineq);
+
+	Eigen::SparseMatrix<double> SQ(qp1.Q.sparseView());
+	Eigen::SparseMatrix<double> SC(qp1.C.sparseView());
+	Eigen::SparseMatrix<double> SAeq(qp1.Aeq.sparseView());
+	Eigen::SparseMatrix<double> SAineq(qp1.Aineq.sparseView());
+	Eigen::SparseVector<double> SBeq(qp1.Beq.sparseView());
+	Eigen::SparseVector<double> SBineq(qp1.Bineq.sparseView());
+
+	SQ.makeCompressed();
+	SC.makeCompressed();
+	SAeq.makeCompressed();
+	SAineq.makeCompressed();
+
+	qp.solve(SQ, SC,
+		SAeq, SBeq,
+		SAineq, SBineq,
+		qp1.XL, qp1.XU);
+
+	Eigen::VectorXd dual_eq = qp.dual_eq();
+	CHECK(dual_eq.size() == qp1.nreq);
+	Eigen::VectorXd dual_ineq = qp.dual_ineq();
+	CHECK(dual_ineq.size() == qp1.nrineq);
+}

@@ -36,7 +36,7 @@ public:
 	{
 		DEFAULT = -1,
 		PRIMAL = 0,
-		DUAL = 1, 
+		DUAL = 1,
 		NONE = 2
 	};
 
@@ -47,8 +47,10 @@ public:
 	EIGEN_GUROBI_API int fail() const;
 
 	EIGEN_GUROBI_API const VectorXd& result() const;
+	EIGEN_GUROBI_API const VectorXd& dual_eq() const;
+	EIGEN_GUROBI_API const VectorXd& dual_ineq() const;
 
-	EIGEN_GUROBI_API GurobiCommon::WarmStatus warmStart() const;  
+	EIGEN_GUROBI_API GurobiCommon::WarmStatus warmStart() const;
 	EIGEN_GUROBI_API void warmStart(GurobiCommon::WarmStatus warmStatus);
 
 	EIGEN_GUROBI_API void inform() const;
@@ -66,7 +68,7 @@ public:
 
 protected:
 	MatrixXd Q_;
-	VectorXd C_, Beq_, Bineq_, X_;
+	VectorXd C_, Beq_, Bineq_, X_, Yeq_, Yineq_;
 	int fail_, nrvar_, nreq_, nrineq_, iter_;
 
 	GRBEnv env_;
