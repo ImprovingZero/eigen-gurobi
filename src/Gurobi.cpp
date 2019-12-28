@@ -23,8 +23,8 @@ namespace Eigen
 
 
 /**
-	*												GurobiCommon
-	*/
+ * GurobiCommon
+ */
 
 
 GurobiCommon::GurobiCommon():
@@ -235,15 +235,15 @@ void GurobiCommon::problem(int nrvar, int nreq, int nrineq)
 		ineqvars_.insert(ineqvars_.end(), static_cast<size_t>(nrineq_), *(vars_+i));
 	}
 }
-    
+
 void GurobiCommon::setVariableType(int varIndex, char GRBType) {
     model_.getVar(varIndex).set(GRB_CharAttr_VType, GRBType);
 }
 
 
 /**
-	*												GurobiDense
-	*/
+ * GurobiDense
+ */
 
 
 GurobiDense::GurobiDense()
@@ -312,8 +312,8 @@ bool GurobiDense::solve(const MatrixXd& Q, const VectorXd& C,
 
 
 /**
-	*												GurobiSparse
-	*/
+ * GurobiSparse
+ */
 
 
 GurobiSparse::GurobiSparse()
