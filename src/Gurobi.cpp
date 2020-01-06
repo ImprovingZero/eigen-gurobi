@@ -35,7 +35,7 @@ GurobiCommon::GurobiCommon():
 	X_(),
 	Yeq_(),
 	Yineq_(),
-	fail_(0),
+	status_(0),
 	nrvar_(0),
 	nreq_(0),
 	nrineq_(0),
@@ -52,25 +52,40 @@ int GurobiCommon::iter() const
 }
 
 
-int GurobiCommon::fail() const
+int GurobiCommon::status() const
 {
-	return fail_;
+	return status_;
+}
+
+
+bool GurobiCommon::success() const
+{
+	return status_ == GRB_OPTIMAL || status_ == GRB_SUBOPTIMAL;
 }
 
 
 const VectorXd& GurobiCommon::result() const
 {
-	return X_;
+	if (success()) {
+		return X_;
+	}
+	throw "solve unsuccessful; unable to retrieve result";
 }
 
 const VectorXd& GurobiCommon::dual_eq() const
 {
-	return Yeq_;
+	if (success()) {
+		return Yeq_;
+	}
+	throw "solve unsuccessful; unable to retrieve dual_eq";
 }
 
 const VectorXd& GurobiCommon::dual_ineq() const
 {
-	return Yineq_;
+	if (success()) {
+		return Yineq_;
+	}
+	throw "solve unsuccessful; unable to retrieve dual_ineq";
 }
 
 GurobiCommon::WarmStatus GurobiCommon::warmStart() const
@@ -87,7 +102,7 @@ void GurobiCommon::warmStart(GurobiCommon::WarmStatus warmStatus)
 
 void GurobiCommon::inform() const
 {
-	switch(fail_)
+	switch(status_)
 	{
 		case GRB_LOADED:
 			std::cout << "Model is loaded, but no solution information is available."
@@ -315,17 +330,18 @@ bool GurobiDense::solve(const MatrixXd& Q, const VectorXd& C,
 
 	model_.optimize();
 
-	fail_ = model_.get(GRB_IntAttr_Status);
-	bool success = fail_ == GRB_OPTIMAL;
+	status_ = model_.get(GRB_IntAttr_Status);
 	iter_ = model_.get(GRB_IntAttr_BarIterCount);
-	double* result = model_.get(GRB_DoubleAttr_X, vars_, nrvar_);
-	X_ = Map<VectorXd>(result, nrvar_);
-	double* dual_eq = model_.get(GRB_DoubleAttr_Pi, eqconstr_, nreq_);
-	Yeq_ = Map<VectorXd>(dual_eq, nreq_);
-	double* dual_ineq = model_.get(GRB_DoubleAttr_Pi, ineqconstr_, nrineq_);
-	Yineq_ = Map<VectorXd>(dual_ineq, nrineq_);
+	if (success()) {
+		double* result = model_.get(GRB_DoubleAttr_X, vars_, nrvar_);
+		X_ = Map<VectorXd>(result, nrvar_);
+		double* dual_eq = model_.get(GRB_DoubleAttr_Pi, eqconstr_, nreq_);
+		Yeq_ = Map<VectorXd>(dual_eq, nreq_);
+		double* dual_ineq = model_.get(GRB_DoubleAttr_Pi, ineqconstr_, nrineq_);
+		Yineq_ = Map<VectorXd>(dual_ineq, nrineq_);
+	}
 
-	return success;
+	return success();
 }
 
 
@@ -409,17 +425,18 @@ bool GurobiSparse::solve(const SparseMatrix<double>& Q, const SparseVector<doubl
 
 	model_.optimize();
 
-	fail_ = model_.get(GRB_IntAttr_Status);
-	bool success = fail_ == GRB_OPTIMAL;
-	double* result = model_.get(GRB_DoubleAttr_X, vars_, nrvar_);
+	status_ = model_.get(GRB_IntAttr_Status);
 	iter_ = model_.get(GRB_IntAttr_BarIterCount);
-	X_ = Map<VectorXd>(result, nrvar_);
-	double* dual_eq = model_.get(GRB_DoubleAttr_Pi, eqconstr_, nreq_);
-	Yeq_ = Map<VectorXd>(dual_eq, nreq_);
-	double* dual_ineq = model_.get(GRB_DoubleAttr_Pi, ineqconstr_, nrineq_);
-	Yineq_ = Map<VectorXd>(dual_ineq, nrineq_);
+	if (success()) {
+		double* result = model_.get(GRB_DoubleAttr_X, vars_, nrvar_);
+		X_ = Map<VectorXd>(result, nrvar_);
+		double* dual_eq = model_.get(GRB_DoubleAttr_Pi, eqconstr_, nreq_);
+		Yeq_ = Map<VectorXd>(dual_eq, nreq_);
+		double* dual_ineq = model_.get(GRB_DoubleAttr_Pi, ineqconstr_, nrineq_);
+		Yineq_ = Map<VectorXd>(dual_ineq, nrineq_);
+	}
 
-	return success;
+	return success();
 }
 
 } // namespace Eigen

@@ -44,7 +44,8 @@ public:
 	EIGEN_GUROBI_API GurobiCommon();
 
 	EIGEN_GUROBI_API int iter() const;
-	EIGEN_GUROBI_API int fail() const;
+	EIGEN_GUROBI_API int status() const;
+	EIGEN_GUROBI_API bool success() const;
 
 	EIGEN_GUROBI_API const VectorXd& result() const;
 	EIGEN_GUROBI_API const VectorXd& dual_eq() const;
@@ -69,7 +70,7 @@ public:
 protected:
 	MatrixXd Q_;
 	VectorXd C_, Beq_, Bineq_, X_, Yeq_, Yineq_;
-	int fail_, nrvar_, nreq_, nrineq_, iter_;
+	int status_, nrvar_, nreq_, nrineq_, iter_;
 
 	GRBEnv env_;
 	GRBModel model_;
