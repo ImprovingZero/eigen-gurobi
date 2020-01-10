@@ -54,6 +54,7 @@ public:
 	EIGEN_GUROBI_API GurobiCommon::WarmStatus warmStart() const;
 	EIGEN_GUROBI_API void warmStart(GurobiCommon::WarmStatus warmStatus);
 
+	EIGEN_GUROBI_API std::string statusDescription() const;
 	EIGEN_GUROBI_API void inform() const;
 	EIGEN_GUROBI_API void displayOutput(bool doDisplay);
 
