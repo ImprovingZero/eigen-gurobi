@@ -15,16 +15,16 @@ include(${PROJECT_NAME}DownloadExternal)
 ################################################################################
 
 # Eigen
-# if(NOT TARGET Eigen3::Eigen)
-#   download_eigen()
-#   add_library(${PROJECT_NAME}_eigen INTERFACE)
-#   target_include_directories(${PROJECT_NAME}_eigen SYSTEM INTERFACE
-#     $<BUILD_INTERFACE:${${PROJECT_NAME}_EXTERNAL}/eigen>
-#     $<INSTALL_INTERFACE:include>
-#   )
-#   set_property(TARGET ${PROJECT_NAME}_eigen PROPERTY EXPORT_NAME Eigen3::Eigen)
-#   add_library(Eigen3::Eigen ALIAS ${PROJECT_NAME}_eigen)
-# endif()
+if(NOT TARGET Eigen3::Eigen)
+  download_eigen()
+  add_library(${PROJECT_NAME}_eigen INTERFACE)
+  target_include_directories(${PROJECT_NAME}_eigen SYSTEM INTERFACE
+    $<BUILD_INTERFACE:${EIGEN_GUROBI_EXTERNAL}/eigen>
+    $<INSTALL_INTERFACE:include>
+  )
+  set_property(TARGET ${PROJECT_NAME}_eigen PROPERTY EXPORT_NAME Eigen3::Eigen)
+  add_library(Eigen3::Eigen ALIAS ${PROJECT_NAME}_eigen)
+endif()
 
 # Catch2
 if(EIGEN_GUROBI_WITH_TESTS AND NOT TARGET Catch2::Catch2)

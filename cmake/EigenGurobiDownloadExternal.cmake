@@ -24,7 +24,7 @@ endfunction()
 # Eigen
 function(download_eigen)
 	eigen_gurobi_download_project(eigen
-		GIT_REPOSITORY https://github.com/eigenteam/eigen-git-mirror.git
+		GIT_REPOSITORY https://gitlab.com/libeigen/eigen.git
 		GIT_TAG        3.3.7
 	)
 endfunction()

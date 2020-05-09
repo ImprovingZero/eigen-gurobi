@@ -19,24 +19,26 @@ include(${PROJECT_NAME}Dependencies)
 # EigenGurobi Library
 ################################################################################
 
-add_library(${PROJECT_NAME} "src/Gurobi.cpp")
 
-target_include_directories(${PROJECT_NAME} PUBLIC "src/")
+add_library(${PROJECT_NAME}
+  src/Gurobi.cpp
+)
+
+target_include_directories(${PROJECT_NAME} PUBLIC src)
 
 ################################################################################
 # Required Libraries
 ################################################################################
 
 # Eigen
-find_package(Eigen REQUIRED)
-target_include_directories(${PROJECT_NAME} PUBLIC ${Eigen_INCLUDE_DIRS})
+target_link_libraries(${PROJECT_NAME} PUBLIC Eigen3::Eigen)
 
 # Gurobi
 find_package(GUROBI REQUIRED)
 target_include_directories(${PROJECT_NAME} PUBLIC ${GUROBI_INCLUDE_DIRS})
 foreach(GUROBI_LIBRARY ${GUROBI_LIBRARIES})
   message(STATUS "Linking ${PROJECT_NAME} against ${GUROBI_LIBRARY}")
-  target_link_libraries(${PROJECT_NAME} ${GUROBI_LIBRARY})
+  target_link_libraries(${PROJECT_NAME} PUBLIC ${GUROBI_LIBRARY})
 endforeach()
 
 ################################################################################
@@ -51,3 +53,6 @@ endif()
 ################################################################################
 # Compiler options
 ################################################################################
+
+# Use C++11
+target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_11)
